@@ -7,7 +7,8 @@
   },
   "scripts": {
     "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run scripts/deploy.ts --network avalanche",
+    "deploy:fuji": "npx hardhat run scripts/deploy.ts --network fuji",
+    "deploy:mumbai": "npx hardhat run scripts/deploy.ts --network mumbai",
     "console": "npx hardhat console",
     "test:mainnet": "npx hardhat --network localhost test",
     "test:local": "npx hardhat --network localhost test"
