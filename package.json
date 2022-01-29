@@ -7,6 +7,7 @@
   },
   "scripts": {
     "compile": "npx hardhat compile",
+    "types": "npx hardhat typechain",
     "deploy:fuji": "npx hardhat run scripts/deploy.ts --network fuji",
     "deploy:mumbai": "npx hardhat run scripts/deploy.ts --network mumbai",
     "console": "npx hardhat console",

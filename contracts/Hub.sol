@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/utils/Counters.sol';
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Hub {
-  using Counters for Counters.Counter;
-  Counters.Counter private _noteIds;
-
   event NoteCreated(
     uint256 indexed noteId,
     address indexed owner,
@@ -21,24 +18,24 @@ contract Hub {
     bytes32 contentId;
   }
 
-  mapping(uint256 => Note) private noteRegistry;
+  mapping(address => mapping(uint256 => Note)) private noteRegistry;
   mapping(bytes32 => string) private contentRegistry;
+  mapping(address => uint256) private addressToNumberOfNotes;
 
   function createNote(
     string calldata _contentUri
   ) external {
-    _noteIds.increment();
-
     address _owner = msg.sender;
     bytes32 _contentId = keccak256(abi.encode(_contentUri));
-    uint256 _noteId = _noteIds.current();
+    uint256 _noteId = addressToNumberOfNotes[_owner] + 1;
 
-    contentRegistry[_contentId] = _contentUri;
-    noteRegistry[_noteId] = Note(
+    addressToNumberOfNotes[_owner] = _noteId;
+    noteRegistry[_owner][_noteId] = Note(
       _noteId,
       _owner,
       _contentId
     );
+    contentRegistry[_contentId] = _contentUri;
 
     emit ContentAdded(_contentId, _contentUri);
     emit NoteCreated(_noteId, _owner, _contentId);
@@ -48,12 +45,12 @@ contract Hub {
     address _owner = msg.sender;
     bytes32 _contentId = keccak256(abi.encode(_contentUri));
 
-    contentRegistry[_contentId] = _contentUri;
-    noteRegistry[_noteId] = Note(
+    noteRegistry[_owner][_noteId] = Note(
       _noteId,
       _owner,
       _contentId
     );
+    contentRegistry[_contentId] = _contentUri;
 
     emit ContentAdded(_contentId, _contentUri);
   }
@@ -65,36 +62,20 @@ contract Hub {
   function getNote(uint256 _noteId) public view returns (Note memory) {
     address _owner = msg.sender;
 
-    Note memory noteToCheck = noteRegistry[_noteId];
-    Note memory noteToReturn;
+    Note memory note = noteRegistry[_owner][_noteId];
 
-    if (noteToCheck.owner == _owner) {
-      noteToReturn = noteToCheck;
-    }
-
-    return noteToReturn;
+    return note;
   }
 
   function getNotes() public view returns (Note[] memory) {
     address _owner = msg.sender;
-    uint256 totalNotesToQuery = _noteIds.current();
-    uint256 noteCount = 0;
-    uint256 currentIndex = 0;
+    uint256 totalNotes = addressToNumberOfNotes[_owner];
+    
+    Note[] memory notes = new Note[](totalNotes);
 
-    for (uint256 i = 0; i < totalNotesToQuery; i++) {
-      if (noteRegistry[i + 1].owner == _owner) {
-        noteCount += 1;
-      }
-    }
-
-    Note[] memory notes = new Note[](noteCount);
-
-    for (uint256 i = 0; i < totalNotesToQuery; i++) {
-      if (noteRegistry[i + 1].owner == _owner) {
-        Note storage currentNote = noteRegistry[i + 1];
-        notes[currentIndex] = currentNote;
-        currentIndex += 1;
-      }
+    for (uint256 i = 0; i < totalNotes; i++) {
+      Note storage currentNote = noteRegistry[_owner][i + 1];
+      notes[i] = currentNote;
     }
 
     return notes;
