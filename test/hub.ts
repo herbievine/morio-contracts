@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
-import type { Hub, TestHub } from '../typechain'
+import type { Hub } from '../typechain'
 import { createContract } from '../utils/createContract'
 import { createIpfsClient } from '../utils/ipfsClient'
 import { testData } from './data'
