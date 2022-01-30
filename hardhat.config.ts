@@ -9,7 +9,7 @@ import 'solidity-coverage'
 dotenv.config()
 
 const config: HardhatUserConfig = {
-  defaultNetwork: 'avalanche',
+  defaultNetwork: 'fuji',
   networks: {
     hardhat: {},
     fuji: {

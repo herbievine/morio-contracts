@@ -8,7 +8,7 @@ const testData: {
   createdAt: string
 }[] = []
 
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < 10; i++) {
   testData.push({
     id: v4(),
     title: `Note number ${i + 1}`,

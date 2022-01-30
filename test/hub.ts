@@ -6,9 +6,6 @@ import { createIpfsClient } from '../utils/ipfsClient'
 import { testData } from './data'
 import axios from 'axios'
 
-const bytes32Address =
-  '0x0000000000000000000000000000000000000000000000000000000000000000'
-
 describe('Hub', () => {
   it('It should create a note', async () => {
     const [address] = await ethers.getSigners()
